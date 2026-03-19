@@ -1,9 +1,26 @@
-# Wings-compatible llama.cpp CPU image.
-FROM ghcr.io/ggml-org/llama.cpp:server
+FROM        --platform=$TARGETOS/$TARGETARCH debian:bookworm-slim
 
-RUN apt-get update -y \
-    && apt-get install -y bash \
-    && rm -rf /var/lib/apt/lists/*
+LABEL       author="you" maintainer="you@example.com"
 
-ENTRYPOINT []
-CMD []
+ENV         DEBIAN_FRONTEND=noninteractive
+
+RUN         apt-get update \
+            && apt-get upgrade -y \
+            && apt-get install -y \
+                bash \
+                curl \
+                wget \
+                iproute2 \
+                ca-certificates \
+            && rm -rf /var/lib/apt/lists/*
+
+# Copy llama-server out of the official image
+COPY        --from=ghcr.io/ggml-org/llama.cpp:server /app/llama-server /usr/local/bin/llama-server
+
+RUN         useradd -d /home/container -m container
+USER        container
+ENV         USER=container HOME=/home/container
+WORKDIR     /home/container
+
+COPY        ./entrypoint.sh /entrypoint.sh
+CMD         ["/bin/bash", "/entrypoint.sh"]
