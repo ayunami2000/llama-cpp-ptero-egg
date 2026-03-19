@@ -1,21 +1,12 @@
-FROM        --platform=$TARGETOS/$TARGETARCH nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
+FROM        ghcr.io/ggml-org/llama.cpp:server-cuda
 
 LABEL       author="you" maintainer="you@example.com"
 
 ENV         DEBIAN_FRONTEND=noninteractive
 
 RUN         apt-get update \
-            && apt-get upgrade -y \
-            && apt-get install -y \
-                bash \
-                curl \
-                wget \
-                iproute2 \
-                ca-certificates \
+            && apt-get install -y iproute2 \
             && rm -rf /var/lib/apt/lists/*
-
-# Copy llama-server out of the official image so we don't inherit its ENTRYPOINT
-COPY        --from=ghcr.io/ggml-org/llama.cpp:server-cuda /app/llama-server /usr/local/bin/llama-server
 
 RUN         useradd -d /home/container -m container
 USER        container
@@ -23,4 +14,6 @@ ENV         USER=container HOME=/home/container
 WORKDIR     /home/container
 
 COPY        ./entrypoint.sh /entrypoint.sh
+
+ENTRYPOINT  []
 CMD         ["/bin/bash", "/entrypoint.sh"]

@@ -14,7 +14,7 @@
     "CPU": "ghcr.io/ayunami2000/llama-cpp-ptero:cpu"
   },
   "file_denylist": [],
-  "startup": "llama-server -m /home/container/models/{{MODEL_FILE}} --host 0.0.0.0 --port {{SERVER_PORT}} -c {{CONTEXT_SIZE}} -t {{THREADS}} -ngl {{GPU_LAYERS}} {{EXTRA_FLAGS}}",
+  "startup": "/app/llama-server -m /home/container/models/{{MODEL_FILE}} --host 0.0.0.0 --port {{SERVER_PORT}} -c {{CONTEXT_SIZE}} -t {{THREADS}} -ngl {{GPU_LAYERS}} {{EXTRA_FLAGS}}",
   "config": {
     "files": "{}",
     "startup": "{\r\n    \"done\": \"HTTP server listening\"\r\n}",
