@@ -1,0 +1,9 @@
+# Wings-compatible llama.cpp CPU image.
+FROM ghcr.io/ggml-org/llama.cpp:server
+
+RUN apt-get update -y \
+    && apt-get install -y bash \
+    && rm -rf /var/lib/apt/lists/*
+
+ENTRYPOINT []
+CMD []

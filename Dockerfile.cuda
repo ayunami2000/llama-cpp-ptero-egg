@@ -1,0 +1,11 @@
+# Wings-compatible llama.cpp CUDA image.
+# Strips the upstream ENTRYPOINT so Pterodactyl Wings can run
+# the startup command directly.
+FROM ghcr.io/ggml-org/llama.cpp:server-cuda
+
+RUN apt-get update -y \
+    && apt-get install -y bash \
+    && rm -rf /var/lib/apt/lists/*
+
+ENTRYPOINT []
+CMD []

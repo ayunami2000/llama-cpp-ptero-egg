@@ -1,0 +1,93 @@
+{
+  "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY PTERODACTYL PANEL - PTERODACTYL.IO",
+  "meta": {
+    "version": "PTDL_v2",
+    "update_url": null
+  },
+  "exported_at": "2026-03-19T00:00:00+00:00",
+  "name": "llama.cpp",
+  "author": "your@email.com",
+  "description": "Runs llama.cpp llama-server. Uses a Wings-compatible wrapper image built from ghcr.io/ggml-org/llama.cpp with the ENTRYPOINT stripped. CUDA variant requires the nvidia container runtime set as default on the Wings node.",
+  "features": null,
+  "docker_images": {
+    "CUDA [GPU]": "ghcr.io/YOURGITHUBUSER/llama-cpp-ptero:cuda",
+    "CPU": "ghcr.io/YOURGITHUBUSER/llama-cpp-ptero:cpu"
+  },
+  "file_denylist": [],
+  "startup": "/app/llama-server -m /home/container/models/{{MODEL_FILE}} --host 0.0.0.0 --port {{SERVER_PORT}} -c {{CONTEXT_SIZE}} -t {{THREADS}} -ngl {{GPU_LAYERS}} {{EXTRA_FLAGS}}",
+  "config": {
+    "files": "{}",
+    "startup": "{\r\n    \"done\": \"HTTP server listening\"\r\n}",
+    "logs": "{}",
+    "stop": "^C"
+  },
+  "scripts": {
+    "installation": {
+      "script": "#!/bin/bash\r\nset -e\r\napt-get update -y && apt-get install -y wget\r\ncd /mnt/server\r\nmkdir -p models\r\nif [ -n \"${MODEL_URL}\" ] && [ \"${MODEL_URL}\" != \"none\" ]; then\r\n  echo \"Downloading model: ${MODEL_URL}\"\r\n  wget -q --show-progress -O \"models/${MODEL_FILE}\" \"${MODEL_URL}\"\r\n  echo \"Saved: models/${MODEL_FILE}\"\r\nelse\r\n  echo \"No MODEL_URL set. Upload your GGUF to /home/container/models/${MODEL_FILE} via SFTP.\"\r\nfi\r\necho \"Done!\"\r\n",
+      "container": "ghcr.io/pterodactyl/installers:debian",
+      "entrypoint": "bash"
+    }
+  },
+  "variables": [
+    {
+      "name": "Model File Name",
+      "description": "Filename of the GGUF model inside the models/ folder. Example: mistral-7b.Q4_K_M.gguf",
+      "env_variable": "MODEL_FILE",
+      "default_value": "model.gguf",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|max:200",
+      "field_type": "text"
+    },
+    {
+      "name": "Model Download URL",
+      "description": "Direct download URL for the GGUF model (e.g. HuggingFace raw link). Set to 'none' to skip and upload manually via SFTP.",
+      "env_variable": "MODEL_URL",
+      "default_value": "none",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|max:512",
+      "field_type": "text"
+    },
+    {
+      "name": "GPU Layers (n-gpu-layers)",
+      "description": "Layers to offload to GPU. Set 999 to offload everything. Set 0 for CPU-only.",
+      "env_variable": "GPU_LAYERS",
+      "default_value": "999",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|integer|min:0|max:999",
+      "field_type": "text"
+    },
+    {
+      "name": "Context Size",
+      "description": "Context window in tokens. Higher = more VRAM. Common values: 2048, 4096, 8192.",
+      "env_variable": "CONTEXT_SIZE",
+      "default_value": "4096",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|integer|min:512|max:131072",
+      "field_type": "text"
+    },
+    {
+      "name": "CPU Threads",
+      "description": "CPU threads for non-GPU layers. Match to your allocated vCPU count.",
+      "env_variable": "THREADS",
+      "default_value": "4",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|integer|min:1|max:256",
+      "field_type": "text"
+    },
+    {
+      "name": "Extra Flags",
+      "description": "Additional llama-server flags. Example: --flash-attn --mlock. Leave blank for defaults.",
+      "env_variable": "EXTRA_FLAGS",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|max:512",
+      "field_type": "text"
+    }
+  ]
+}
