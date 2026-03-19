@@ -10,8 +10,8 @@
   "description": "Runs llama.cpp llama-server. Uses a Wings-compatible wrapper image built from ghcr.io/ggml-org/llama.cpp with the ENTRYPOINT stripped. CUDA variant requires the nvidia container runtime set as default on the Wings node.",
   "features": null,
   "docker_images": {
-    "CUDA [GPU]": "ghcr.io/YOURGITHUBUSER/llama-cpp-ptero:cuda",
-    "CPU": "ghcr.io/YOURGITHUBUSER/llama-cpp-ptero:cpu"
+    "CUDA [GPU]": "ghcr.io/ayunami2000/llama-cpp-ptero:cuda",
+    "CPU": "ghcr.io/ayunami2000/llama-cpp-ptero:cpu"
   },
   "file_denylist": [],
   "startup": "/app/llama-server -m /home/container/models/{{MODEL_FILE}} --host 0.0.0.0 --port {{SERVER_PORT}} -c {{CONTEXT_SIZE}} -t {{THREADS}} -ngl {{GPU_LAYERS}} {{EXTRA_FLAGS}}",
